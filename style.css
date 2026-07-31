@@ -83,3 +83,13 @@ h3{
     color:#7ec8ff;
     margin-bottom:4px;
 }
+
+.footer{
+    margin-top:60px;   /* Abstand zur Flipper-Liste */
+    padding-top:20px;
+    border-top:1px solid #333;
+    text-align:center;
+    color:#aaa;
+    font-size:14px;
+    line-height:1.5;
+}
