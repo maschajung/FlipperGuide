@@ -19,14 +19,20 @@ Papa.parse("FilpperGuide.csv", {
 function fill(f) {
     l.innerHTML = "";
 
-    data.filter(x =>
+    let treffer = data.filter(x =>
         x.Flipper.toLowerCase().includes(f.toLowerCase())
-    ).forEach(x => {
+    );
+
+    treffer.forEach(x => {
         let o = document.createElement("option");
         o.value = x.Flipper;
         o.textContent = x.Flipper;
         l.appendChild(o);
     });
+
+    if (l.options.length > 0) {
+        l.selectedIndex = 0;
+    }
 
     show();
 }
