@@ -1,4 +1,4 @@
-const CACHE = "fg5";
+const CACHE = "fg6";
 
 const FILES = [
     "./",
