@@ -21,6 +21,14 @@ h1{
     height:auto;
     border-radius:12px;
 }
+.subtitle{
+    text-align:center;
+    font-size:14px;
+    color:#aaa;
+    margin-top:-10px;
+    margin-bottom:20px;
+    font-style:italic;
+}
 
 input,
 select{
