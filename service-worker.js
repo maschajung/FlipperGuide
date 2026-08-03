@@ -1,11 +1,11 @@
-const CACHE = "fg11";
+
+const CACHE = "fg12";
 
 const FILES = [
     "./",
     "index.html",
     "style.css",
     "script.js",
-    "FilpperGuide.csv",
     "flipper.png",
     "manifest.json"
 ];
@@ -33,6 +33,16 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+
+    // CSV immer aktuell vom Server laden
+    if (event.request.url.includes("FilpperGuide.csv")) {
+        event.respondWith(
+            fetch(event.request).catch(() => caches.match(event.request))
+        );
+        return;
+    }
+
+    // Alle anderen Dateien aus dem Cache laden
     event.respondWith(
         caches.match(event.request).then(response => {
             return response || fetch(event.request);
