@@ -55,7 +55,7 @@ self.addEventListener("fetch", event => {
     const url = new URL(event.request.url);
 
     // CSV IMMER aktuell vom Server laden
-    if (url.pathname.endsWith("FilpperGuide.csv")) {
+    if (url.pathname.endsWith("filpperGuide_V1.csv")) {
 
         event.respondWith(
 
