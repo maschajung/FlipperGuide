@@ -4,25 +4,34 @@ const q = document.getElementById("q");
 const l = document.getElementById("list");
 const c = document.getElementById("card");
 
-// Immer aktuelle CSV laden (kein Browser-Cache)
-Papa.parse("FilpperGuide.csv?ts=" + Date.now(), {
+// Aktuelle CSV laden (Cache umgehen)
+const csvFile = "FilpperGuide_V1.csv";
+
+Papa.parse(csvFile + "?ts=" + Date.now(), {
     download: true,
     header: true,
     skipEmptyLines: true,
 
-    complete: function (results) {
+    complete(results) {
 
-        console.log("CSV geladen:", results.data.length + " Flipper");
+        if (results.errors.length > 0) {
+            console.error("CSV-Fehler:", results.errors);
+        }
+
+        console.log("CSV:", csvFile);
+        console.log("Datensätze:", results.data.length);
+        console.log("Spalten:", results.meta.fields);
 
         data = results.data
-            .filter(x => x.Flipper && x.Flipper.trim() !== "")
+            .filter(row => row.Flipper && row.Flipper.trim() !== "")
             .sort((a, b) => a.Flipper.localeCompare(b.Flipper));
 
         fill("");
     },
 
-    error: function (err) {
+    error(err) {
         console.error("CSV konnte nicht geladen werden:", err);
+        c.innerHTML = "<h3>Fehler</h3><p>CSV konnte nicht geladen werden.</p>";
     }
 });
 
@@ -39,7 +48,6 @@ function fill(filter) {
         const option = document.createElement("option");
         option.value = x.Flipper;
         option.textContent = x.Flipper;
-
         l.appendChild(option);
 
     });
@@ -50,7 +58,6 @@ function fill(filter) {
     } else {
         c.innerHTML = "<p>Kein Flipper gefunden.</p>";
     }
-
 }
 
 function show() {
@@ -59,14 +66,13 @@ function show() {
 
     if (!x) return;
 
-    let html = "<h3>" + x.Flipper + "</h3>";
+    let html = `<h3>${x.Flipper}</h3>`;
 
     Object.entries(x)
         .filter(([key, value]) =>
             key !== "Flipper" &&
-            value !== "" &&
-            value !== null &&
-            value !== undefined
+            value &&
+            value.trim() !== ""
         )
         .forEach(([key, value]) => {
 
@@ -76,25 +82,15 @@ function show() {
                     <div>${value}</div>
                 </div>
             `;
-
         });
 
     c.innerHTML = html;
-
 }
 
-q.addEventListener("input", function () {
-    fill(this.value);
-});
-
+q.addEventListener("input", () => fill(q.value));
 l.addEventListener("change", show);
 
 // Service Worker registrieren
 if ("serviceWorker" in navigator) {
-
-    navigator.serviceWorker
-        .register("service-worker.js")
-        .then(() => console.log("Service Worker registriert"))
-        .catch(err => console.error(err));
-
+    navigator.serviceWorker.register("service-worker.js");
 }
