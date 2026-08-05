@@ -11,15 +11,17 @@ const csvFile = "filpperguide_v1.csv";
 fetch("version.json?ts=" + Date.now(), {
     cache: "no-store"
 })
-.then(r => r.json())
-.then(v => {
-    version.innerHTML =
-        `📅 Datenstand: ${v.version} &nbsp;&nbsp; 🎱 ${v.flipper} Flipper`;
+.then(r => {
+    if (!r.ok) throw new Error("version.json nicht gefunden");
+    return r.json();
 })
-.catch(() => {
-    version.innerHTML = "";
+.then(v => {
+    version.innerHTML = `📅 Datenstand: ${v.version} &nbsp;&nbsp; 🎱 ${v.flipper} Flipper`;
+})
+.catch(err => {
+    console.error(err);
+    version.innerHTML = "📅 Datenstand unbekannt";
 });
-
 // CSV laden
 loadCSV();
 
