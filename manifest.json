@@ -1,8 +1,11 @@
 {
   "name": "Flipper Guide",
   "short_name": "Flipper Guide",
+  "description": "Flipper Guide – Regeln, Modi und Strategien für über 290 Flipper.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#121212",
   "theme_color": "#121212",
   "icons": [
