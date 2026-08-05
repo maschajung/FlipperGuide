@@ -29,6 +29,13 @@ h1{
     margin-bottom:20px;
     font-style:italic;
 }
+.version {
+    text-align: center;
+    font-size: 0.9em;
+    color: #999;
+    margin-top: -8px;
+    margin-bottom: 15px;
+}
 
 input,
 select{
