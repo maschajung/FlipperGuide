@@ -4,7 +4,7 @@ const q = document.getElementById("q");
 const l = document.getElementById("list");
 const c = document.getElementById("card");
 
-const csvFile = "filpperGuide_V1.csv";
+const csvFile = "filpperguide_v1.csv";
 
 // CSV laden
 loadCSV();
