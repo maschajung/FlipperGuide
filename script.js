@@ -4,7 +4,7 @@ const q = document.getElementById("q"),
       l = document.getElementById("list"),
       c = document.getElementById("card");
 
-Papa.parse("FilpperGuide.csv", {
+Papa.parse("FilpperGuide.csv?v=" + Date.now(), {
     download: true,
     header: true,
     skipEmptyLines: true,
