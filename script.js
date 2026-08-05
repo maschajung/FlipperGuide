@@ -3,10 +3,11 @@ let data = [];
 const q = document.getElementById("q");
 const l = document.getElementById("list");
 const c = document.getElementById("card");
-const c = document.getElementById("version");
+const version = document.getElementById("version");
 
 const csvFile = "filpperguide_v1.csv";
 
+// Versionsinformationen laden
 fetch("version.json?ts=" + Date.now(), {
     cache: "no-store"
 })
@@ -18,6 +19,7 @@ fetch("version.json?ts=" + Date.now(), {
 .catch(() => {
     version.innerHTML = "";
 });
+
 // CSV laden
 loadCSV();
 
