@@ -11,50 +11,79 @@ const APP_FILES = [
 
 // Installation
 self.addEventListener("install", event => {
+
     self.skipWaiting();
+
     event.waitUntil(
-        caches.open(CACHE).then(cache => cache.addAll(APP_FILES))
+        caches.open(CACHE).then(cache => {
+            return cache.addAll(APP_FILES);
+        })
     );
+
 });
 
-// Alte Caches löschen
+// Aktivierung
 self.addEventListener("activate", event => {
+
     event.waitUntil(
+
         caches.keys().then(keys =>
+
             Promise.all(
+
                 keys.map(key => {
+
                     if (key !== CACHE) {
                         return caches.delete(key);
                     }
+
                 })
+
             )
+
         )
+
     );
+
     self.clients.claim();
+
 });
 
-// Fetch
+// Dateien abrufen
 self.addEventListener("fetch", event => {
 
     const url = new URL(event.request.url);
 
-    // CSV NIE cachen
+    // CSV IMMER aktuell vom Server laden
     if (url.pathname.endsWith("FilpperGuide.csv")) {
 
         event.respondWith(
+
             fetch(event.request, {
                 cache: "no-store"
-            })
+            }).catch(() =>
+                caches.match(event.request)
+            )
+
         );
 
         return;
+
     }
 
-    // App-Dateien aus Cache
+    // Alle anderen Dateien aus Cache
     event.respondWith(
+
         caches.match(event.request).then(response => {
-            return response || fetch(event.request);
+
+            if (response) {
+                return response;
+            }
+
+            return fetch(event.request);
+
         })
+
     );
 
 });
