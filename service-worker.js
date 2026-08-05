@@ -1,4 +1,4 @@
-const CACHE = "fg-app-v1";
+const CACHE = "fg-app-v13";
 
 const APP_FILES = [
     "./",
