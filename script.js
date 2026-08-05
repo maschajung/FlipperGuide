@@ -3,9 +3,21 @@ let data = [];
 const q = document.getElementById("q");
 const l = document.getElementById("list");
 const c = document.getElementById("card");
+const c = document.getElementById("version");
 
 const csvFile = "filpperguide_v1.csv";
 
+fetch("version.json?ts=" + Date.now(), {
+    cache: "no-store"
+})
+.then(r => r.json())
+.then(v => {
+    version.innerHTML =
+        `📅 Datenstand: ${v.version} &nbsp;&nbsp; 🎱 ${v.flipper} Flipper`;
+})
+.catch(() => {
+    version.innerHTML = "";
+});
 // CSV laden
 loadCSV();
 
