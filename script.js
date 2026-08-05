@@ -4,36 +4,66 @@ const q = document.getElementById("q");
 const l = document.getElementById("list");
 const c = document.getElementById("card");
 
-// Aktuelle CSV laden (Cache umgehen)
-const csvFile = "FilpperGuide_V1.csv";
+const csvFile = "filpperGuide_V1.csv";
 
-Papa.parse(csvFile + "?ts=" + Date.now(), {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
+// CSV laden
+loadCSV();
 
-    complete(results) {
+function loadCSV() {
 
-        if (results.errors.length > 0) {
-            console.error("CSV-Fehler:", results.errors);
-        }
+    fetch(csvFile + "?ts=" + Date.now(), {
+        cache: "no-store"
+    })
+        .then(response => {
 
-        console.log("CSV:", csvFile);
-        console.log("Datensätze:", results.data.length);
-        console.log("Spalten:", results.meta.fields);
+            if (!response.ok) {
+                throw new Error("CSV nicht gefunden (" + response.status + ")");
+            }
 
-        data = results.data
-            .filter(row => row.Flipper && row.Flipper.trim() !== "")
-            .sort((a, b) => a.Flipper.localeCompare(b.Flipper));
+            console.log("CSV geladen:", response.url);
 
-        fill("");
-    },
+            return response.text();
 
-    error(err) {
-        console.error("CSV konnte nicht geladen werden:", err);
-        c.innerHTML = "<h3>Fehler</h3><p>CSV konnte nicht geladen werden.</p>";
-    }
-});
+        })
+        .then(text => {
+
+            Papa.parse(text, {
+
+                header: true,
+                skipEmptyLines: true,
+
+                complete(results) {
+
+                    if (results.errors.length > 0) {
+                        console.warn("PapaParse:", results.errors);
+                    }
+
+                    console.log("Flipper:", results.data.length);
+                    console.log("Spalten:", results.meta.fields);
+
+                    data = results.data
+                        .filter(x => x.Flipper && x.Flipper.trim() !== "")
+                        .sort((a, b) => a.Flipper.localeCompare(b.Flipper));
+
+                    fill("");
+
+                }
+
+            });
+
+        })
+        .catch(err => {
+
+            console.error(err);
+
+            c.innerHTML = `
+                <h3>Fehler</h3>
+                <p>${err.message}</p>
+            `;
+
+        });
+
+}
 
 function fill(filter) {
 
@@ -46,18 +76,25 @@ function fill(filter) {
     treffer.forEach(x => {
 
         const option = document.createElement("option");
+
         option.value = x.Flipper;
         option.textContent = x.Flipper;
+
         l.appendChild(option);
 
     });
 
     if (l.options.length > 0) {
+
         l.selectedIndex = 0;
         show();
+
     } else {
+
         c.innerHTML = "<p>Kein Flipper gefunden.</p>";
+
     }
+
 }
 
 function show() {
@@ -82,15 +119,21 @@ function show() {
                     <div>${value}</div>
                 </div>
             `;
+
         });
 
     c.innerHTML = html;
+
 }
 
 q.addEventListener("input", () => fill(q.value));
 l.addEventListener("change", show);
 
-// Service Worker registrieren
+// Service Worker
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
+
+    navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registriert"))
+        .catch(err => console.error(err));
+
 }
