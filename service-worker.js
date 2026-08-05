@@ -1,22 +1,23 @@
+const CACHE = "fg-app-v1";
 
-const CACHE = "fg12";
-
-const FILES = [
+const APP_FILES = [
     "./",
-    "index.html",
-    "style.css",
-    "script.js",
-    "flipper.png",
-    "manifest.json"
+    "./index.html",
+    "./style.css",
+    "./script.js",
+    "./manifest.json",
+    "./flipper.png"
 ];
 
+// Installation
 self.addEventListener("install", event => {
-    event.waitUntil(
-        caches.open(CACHE).then(cache => cache.addAll(FILES))
-    );
     self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE).then(cache => cache.addAll(APP_FILES))
+    );
 });
 
+// Alte Caches löschen
 self.addEventListener("activate", event => {
     event.waitUntil(
         caches.keys().then(keys =>
@@ -32,20 +33,28 @@ self.addEventListener("activate", event => {
     self.clients.claim();
 });
 
+// Fetch
 self.addEventListener("fetch", event => {
 
-    // CSV immer aktuell vom Server laden
-    if (event.request.url.includes("FilpperGuide.csv")) {
+    const url = new URL(event.request.url);
+
+    // CSV NIE cachen
+    if (url.pathname.endsWith("FilpperGuide.csv")) {
+
         event.respondWith(
-            fetch(event.request).catch(() => caches.match(event.request))
+            fetch(event.request, {
+                cache: "no-store"
+            })
         );
+
         return;
     }
 
-    // Alle anderen Dateien aus dem Cache laden
+    // App-Dateien aus Cache
     event.respondWith(
         caches.match(event.request).then(response => {
             return response || fetch(event.request);
         })
     );
+
 });
