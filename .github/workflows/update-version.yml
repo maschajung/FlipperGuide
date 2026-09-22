@@ -1,6 +1,7 @@
 name: Update version.json
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "filpperguide_v1.csv"
